@@ -1,0 +1,29 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style-type: none;
+}
+
+.road {
+  border-bottom: 2px dashed black;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-left: 30px;
+  padding-right: 150px;
+}
+
+.flag {
+  width: 60px;
+  height: 60px;
+  background-image: url(./flag.svg);
+  background-size: 60px;
+}
+
+.car {
+  animation-timing-function: linear;
+}
