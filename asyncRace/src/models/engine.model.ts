@@ -1,4 +1,4 @@
 export interface IMovement {
-  velocity: string;
-  distance: string;
+  velocity: number;
+  distance: number;
 }
