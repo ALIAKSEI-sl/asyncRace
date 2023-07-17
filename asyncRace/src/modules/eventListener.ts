@@ -54,9 +54,14 @@ export default class EventListener {
       await this.helper.generatorCar();
       button.disabled = false;
     } else if (button.classList.contains('start-engine-button')) {
+      button.disabled = true;
       await this.helper.startCar(button);
     } else if (button.classList.contains('stop-engine-button')) {
       await this.helper.stopCar(button);
+    } else if (button.classList.contains('race-button')) {
+      this.helper.startRace();
+    } else if (button.classList.contains('reset-button')) {
+      this.helper.resetRace();
     }
   }
 

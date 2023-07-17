@@ -6,10 +6,13 @@ export default class EventHandler {
 
   modelCar: string[];
 
+  isWinner: boolean;
+
   constructor(
     private template: ITemplateBuilder,
     private storage: IStorageService
   ) {
+    this.isWinner = true;
     this.updateCarId = 0;
     this.modelCar = [
       'Opel',
@@ -108,28 +111,80 @@ export default class EventHandler {
 
   public async startCar(button: HTMLButtonElement) {
     const id = +button.id.replace('start-engine-car-', '');
-    const carMovement = await this.storage.startCar(id);
-    const time = +(carMovement.distance / carMovement.velocity / 1000).toFixed(
-      1
-    );
+    this.moveCar(id);
+  }
 
-    const car = document.querySelector(`#car-${id}`) as HTMLDivElement;
-    // const length = Math.ceil(road.clientWidth - 180);
+  private async moveCar(id: number, carElem?: HTMLDivElement) {
+    const carMovement = await this.storage.startCar(id);
+    const time = +(
+      carMovement.distance / carMovement.velocity / 1000 +
+      1
+    ).toFixed(1);
+    const car =
+      carElem || (document.querySelector(`#car-${id}`) as HTMLDivElement);
+    car.style.transitionTimingFunction = 'linear';
     car.style.transition = `transform ${time}s`;
-    car.style.transform = `translateX(${window.innerWidth - 180}px)`;
+    car.style.transform = `translateX(${window.innerWidth - 200}px)`;
     const { success } = await this.storage.driveCar(id);
     if (!success) {
       const computedStyle = window.getComputedStyle(car);
       car.style.transform = computedStyle.transform;
       car.style.transition = 'none';
     }
+    const transitionEndHandler = () => {
+      if (this.isWinner) {
+        this.template.showWinner(this.storage, id, time);
+        this.isWinner = false;
+      }
+      car.removeEventListener('transitionend', transitionEndHandler);
+    };
+    car.addEventListener('transitionend', transitionEndHandler);
   }
 
   public async stopCar(button: HTMLButtonElement) {
     const id = +button.id.replace('stop-engine-car-', '');
-    const car = document.querySelector(`#car-${id}`) as HTMLDivElement;
+    this.resetCar(id);
+  }
+
+  private async resetCar(id: number, carElem?: HTMLDivElement) {
+    this.template.hideWinner();
+    const btnStart = document.querySelector(
+      `#start-engine-car-${id}`
+    ) as HTMLButtonElement;
+    btnStart.disabled = false;
+
+    const car =
+      carElem || (document.querySelector(`#car-${id}`) as HTMLDivElement);
     car.style.transition = 'none';
     car.style.transform = 'none';
     await this.storage.stopCar(id);
+  }
+
+  public async resetRace() {
+    this.isWinner = true;
+    const cars = Array.from(
+      document.querySelectorAll('.car')
+    ) as HTMLDivElement[];
+
+    cars.forEach((car) => {
+      const id = +car.id.replace('car-', '');
+      this.resetCar(id, car);
+    });
+  }
+
+  public async startRace() {
+    const cars = Array.from(
+      document.querySelectorAll('.car')
+    ) as HTMLDivElement[];
+
+    cars.forEach(async (car) => {
+      const id = +car.id.replace('car-', '');
+      const btnStart = document.querySelector(
+        `#start-engine-car-${id}`
+      ) as HTMLButtonElement;
+      btnStart.disabled = false;
+      const par = await this.moveCar(id, car);
+      return par;
+    });
   }
 }
