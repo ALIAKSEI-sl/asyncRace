@@ -4,6 +4,10 @@
   padding: 0;
 }
 
+.wrapper {
+  position: relative;
+}
+
 li {
   list-style-type: none;
 }
@@ -24,6 +28,9 @@ li {
   background-size: 60px;
 }
 
-.car {
-  animation-timing-function: linear;
+.popup-winner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

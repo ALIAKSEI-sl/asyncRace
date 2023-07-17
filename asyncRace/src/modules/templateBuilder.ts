@@ -1,12 +1,12 @@
+import { ICar } from '../models/garage.model';
 import { IStorageService } from '../models/store.model';
 import { ITemplateBuilder } from '../models/templateBuilder.model';
+import finishRace from '../template/finishRace';
 import garageTemplate from '../template/garage.template';
 import mainTemplate from '../template/main.template';
 import winnersTemplate from '../template/winners.template';
 
 class TemplateBuilder implements ITemplateBuilder {
-  public main!: HTMLDivElement;
-
   public container!: HTMLDivElement;
 
   public garageChild!: HTMLDivElement;
@@ -75,6 +75,18 @@ class TemplateBuilder implements ITemplateBuilder {
   public updateContainer(storage: IStorageService) {
     this.createGarageChild(storage);
     this.updateViewGarage();
+  }
+
+  public showWinner(storage: IStorageService, id: number, time: number): void {
+    const { name } = storage.garage.find((car) => car.id === id) as ICar;
+    const wrap = document.querySelector('.wrapper');
+    const finishTemplate = finishRace(name, time);
+    wrap?.insertAdjacentHTML('beforeend', finishTemplate);
+  }
+
+  public hideWinner(): void {
+    const popup = document.querySelector('.popup-winner');
+    popup?.remove();
   }
 }
 

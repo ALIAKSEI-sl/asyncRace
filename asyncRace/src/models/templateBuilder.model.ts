@@ -10,4 +10,6 @@ export interface ITemplateBuilder {
   createGarageChild(storage: IStorageService): void;
   updateViewGarage(): void;
   updateContainer(storage: IStorageService): void;
+  showWinner(storage: IStorageService, id: number, time: number): void;
+  hideWinner(): void;
 }
