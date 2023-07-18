@@ -22,8 +22,9 @@ class Winner {
     };
   }
 
-  async get(id: number): Promise<IWinner> {
+  async get(id: number): Promise<IWinner | null> {
     const response = await fetch(`${this.url}/${id}`);
+    if (response.status === 404) return null;
     return response.json();
   }
 
