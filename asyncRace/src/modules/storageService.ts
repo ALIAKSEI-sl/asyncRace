@@ -1,7 +1,7 @@
 import { IMovement } from '../models/engine.model';
 import { ICar } from '../models/garage.model';
 import { IStorageService } from '../models/store.model';
-import { IWinner } from '../models/winner.model';
+import { IWinner, IWinnerFull, Order, Sort } from '../models/winner.model';
 import engine from '../requests/engine';
 import garage from '../requests/garage';
 import winner from '../requests/winner';
@@ -13,15 +13,31 @@ class StorageService implements IStorageService {
 
   public pageGarage: number;
 
-  public winners!: IWinner[];
+  public winners!: IWinnerFull[];
 
   public countWinners!: number;
 
   public pageWinners: number;
 
+  private orderWinners: Order = 'ASC';
+
   constructor() {
     this.pageGarage = 1;
     this.pageWinners = 1;
+  }
+
+  public async sortingWinners(sort: Sort): Promise<void> {
+    const limit = 10;
+    const { data, count } = await winner.getAll(
+      this.pageWinners,
+      limit,
+      sort,
+      this.orderWinners
+    );
+    const winnersFull = await this.getWinnersInfo(data);
+    this.winners = winnersFull;
+    this.countWinners = count;
+    this.orderWinners = this.orderWinners === 'ASC' ? 'DESC' : 'ASC';
   }
 
   public async initialization(): Promise<IStorageService> {
@@ -36,10 +52,19 @@ class StorageService implements IStorageService {
     this.countCar = count;
   }
 
-  private async getWinners(): Promise<void> {
+  public async getWinners(): Promise<void> {
     const { data, count } = await winner.getAll(this.pageWinners);
-    this.winners = data;
+    const winnersFull = await this.getWinnersInfo(data);
+    this.winners = winnersFull;
     this.countWinners = count;
+  }
+
+  public async getWinnersInfo(data: IWinner[]): Promise<IWinnerFull[]> {
+    const cars = data.map(async (win) => {
+      const { name, color } = await this.getCar(win.id);
+      return { ...win, name, color };
+    });
+    return Promise.all(cars);
   }
 
   public async createCar(body: Omit<ICar, 'id'>): Promise<void> {
@@ -54,6 +79,11 @@ class StorageService implements IStorageService {
       this.pageGarage -= 1;
     }
     await this.getCars();
+    const carWinner = await winner.get(id);
+    if (carWinner) {
+      await winner.remove(id);
+      await this.getWinners();
+    }
   }
 
   public async getCar(id: number): Promise<ICar> {
@@ -70,9 +100,19 @@ class StorageService implements IStorageService {
     await this.getCars();
   }
 
+  public async getNextWinners(): Promise<void> {
+    this.pageWinners += 1;
+    await this.getWinners();
+  }
+
   public async getPrevCars(): Promise<void> {
     this.pageGarage -= 1;
-    await this.getCars();
+    await this.getWinners();
+  }
+
+  public async getPrevWinners(): Promise<void> {
+    this.pageWinners -= 1;
+    await this.getWinners();
   }
 
   public async generatorCar(cars: Omit<ICar, 'id'>[]) {
@@ -93,6 +133,16 @@ class StorageService implements IStorageService {
 
   public async stopCar(id: number): Promise<IMovement> {
     return engine.control(id, 'stopped');
+  }
+
+  public async addWinner(id: number, time: number): Promise<void> {
+    const car = await winner.get(id);
+    if (car) {
+      await winner.update(id, { wins: car.wins + 1, time });
+    } else {
+      await winner.create({ id, wins: 1, time });
+    }
+    this.getWinners();
   }
 }
 

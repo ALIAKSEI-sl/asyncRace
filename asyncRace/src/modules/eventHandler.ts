@@ -82,9 +82,21 @@ export default class EventHandler {
     this.template.updateContainer(this.storage);
   }
 
+  public async nextPageWinners() {
+    await this.storage.getNextWinners();
+    this.template.updateContainerWinner(this.storage);
+    this.template.updateViewWinner();
+  }
+
   public async prevPageGarage() {
     await this.storage.getPrevCars();
     this.template.updateContainer(this.storage);
+  }
+
+  public async prevPageWinners() {
+    await this.storage.getPrevWinners();
+    this.template.updateContainerWinner(this.storage);
+    this.template.updateViewWinner();
   }
 
   public async generatorCar() {
@@ -122,8 +134,7 @@ export default class EventHandler {
     ).toFixed(1);
     const car =
       carElem || (document.querySelector(`#car-${id}`) as HTMLDivElement);
-    car.style.transitionTimingFunction = 'linear';
-    car.style.transition = `transform ${time}s`;
+    car.style.transition = `transform ${time}s linear`;
     car.style.transform = `translateX(${window.innerWidth - 200}px)`;
     const { success } = await this.storage.driveCar(id);
     if (!success) {
@@ -134,7 +145,9 @@ export default class EventHandler {
     const transitionEndHandler = () => {
       if (this.isWinner) {
         this.template.showWinner(this.storage, id, time);
+        this.storage.addWinner(id, time);
         this.isWinner = false;
+        this.template.updateContainerWinner(this.storage);
       }
       car.removeEventListener('transitionend', transitionEndHandler);
     };

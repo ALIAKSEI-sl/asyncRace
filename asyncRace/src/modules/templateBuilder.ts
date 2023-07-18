@@ -19,7 +19,7 @@ class TemplateBuilder implements ITemplateBuilder {
 
     this.createGarageChild(storage);
     this.container.append(this.garageChild);
-    this.createWinnersChild();
+    this.createWinnersChild(storage);
     return this;
   }
 
@@ -31,25 +31,34 @@ class TemplateBuilder implements ITemplateBuilder {
     this.paginationVisibility(storage, 'garage');
   }
 
-  private createWinnersChild() {
+  private createWinnersChild(storage: IStorageService) {
     const root = document.createElement('div');
     root.classList.add('page-winners');
-    root.innerHTML = winnersTemplate;
+    root.innerHTML = winnersTemplate(storage);
     this.winnersChild = root;
+    this.paginationVisibility(storage, 'winner');
   }
 
   private paginationVisibility(storage: IStorageService, name: string) {
+    const parent = name === 'garage' ? this.garageChild : this.winnersChild;
+    const prevBtn = parent.querySelector(
+      `.prev-btn-${name}`
+    ) as HTMLButtonElement;
+    const nextBtn = parent.querySelector(
+      `.next-btn-${name}`
+    ) as HTMLButtonElement;
     if (name === 'garage') {
-      const prevBtn = this.garageChild.querySelector(
-        '.prev-btn-garage'
-      ) as HTMLButtonElement;
-      const nextBtn = this.garageChild.querySelector(
-        '.next-btn-garage'
-      ) as HTMLButtonElement;
       if (storage.pageGarage > 1) {
         prevBtn.disabled = false;
       }
       if (storage.pageGarage * 7 < storage.countCar) {
+        nextBtn.disabled = false;
+      }
+    } else if (name === 'winner') {
+      if (storage.pageWinners > 1) {
+        prevBtn.disabled = false;
+      }
+      if (storage.pageWinners * 7 < storage.countWinners) {
         nextBtn.disabled = false;
       }
     }
@@ -57,6 +66,7 @@ class TemplateBuilder implements ITemplateBuilder {
 
   public showViewWinners(): void {
     if (this.container.firstElementChild?.classList.contains('page-garage')) {
+      this.hideWinner();
       this.container.replaceChild(this.winnersChild, this.garageChild);
     }
   }
@@ -75,6 +85,16 @@ class TemplateBuilder implements ITemplateBuilder {
   public updateContainer(storage: IStorageService) {
     this.createGarageChild(storage);
     this.updateViewGarage();
+  }
+
+  public updateViewWinner(): void {
+    this.container.innerHTML = '';
+    this.container.append(this.winnersChild);
+  }
+
+  public updateContainerWinner(storage: IStorageService): void {
+    this.createWinnersChild(storage);
+    // this.updateViewWinner();
   }
 
   public showWinner(storage: IStorageService, id: number, time: number): void {

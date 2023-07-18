@@ -12,3 +12,11 @@ export interface IWinner {
   wins: number;
   time: number;
 }
+
+export interface IWinnerFull {
+  id: number;
+  wins: number;
+  time: number;
+  name: string;
+  color: string;
+}

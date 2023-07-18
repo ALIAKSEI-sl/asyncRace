@@ -49,6 +49,10 @@ export default class EventListener {
       this.helper.nextPageGarage();
     } else if (button.classList.contains('prev-btn-garage')) {
       this.helper.prevPageGarage();
+    } else if (button.classList.contains('next-btn-winner')) {
+      this.helper.nextPageWinners();
+    } else if (button.classList.contains('prev-btn-winner')) {
+      this.helper.prevPageWinners();
     } else if (button.classList.contains('generator-button')) {
       button.disabled = true;
       await this.helper.generatorCar();
@@ -62,6 +66,14 @@ export default class EventListener {
       this.helper.startRace();
     } else if (button.classList.contains('reset-button')) {
       this.helper.resetRace();
+    } else if (button.classList.contains('number-wins')) {
+      await this.storage.sortingWinners('wins');
+      this.template.updateContainerWinner(this.storage);
+      this.template.updateViewWinner();
+    } else if (button.classList.contains('record-column')) {
+      await this.storage.sortingWinners('time');
+      this.template.updateContainerWinner(this.storage);
+      this.template.updateViewWinner();
     }
   }
 
