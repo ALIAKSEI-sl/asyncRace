@@ -70,10 +70,12 @@ export default class EventListener {
       await this.storage.sortingWinners('wins');
       this.template.updateContainerWinner(this.storage);
       this.template.updateViewWinner();
+      this.storage.changeVisibilityArrow();
     } else if (button.classList.contains('record-column')) {
       await this.storage.sortingWinners('time');
       this.template.updateContainerWinner(this.storage);
       this.template.updateViewWinner();
+      this.storage.changeVisibilityArrow();
     }
   }
 

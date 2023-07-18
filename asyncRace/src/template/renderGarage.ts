@@ -3,8 +3,8 @@ import { IStorageService } from '../models/store.model';
 import renderCar from './renderCar';
 
 export default (storage: IStorageService) => `
-  <h1>Garage (${storage.countCar})</h1>
-  <h2>Page #(${storage.pageGarage})</h2>
+  <h1 class="header">Garage (${storage.countCar})</h1>
+  <h2 class="header-page">Page #(${storage.pageGarage})</h2>
   <ul class="garage">
     ${storage.garage
       .map(

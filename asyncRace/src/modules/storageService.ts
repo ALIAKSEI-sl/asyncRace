@@ -19,7 +19,9 @@ class StorageService implements IStorageService {
 
   public pageWinners: number;
 
-  private orderWinners: Order = 'ASC';
+  private orderWinners: Order = 'DESC';
+
+  private sortWinners: Sort = 'id';
 
   constructor() {
     this.pageGarage = 1;
@@ -27,17 +29,18 @@ class StorageService implements IStorageService {
   }
 
   public async sortingWinners(sort: Sort): Promise<void> {
+    this.orderWinners = this.orderWinners === 'ASC' ? 'DESC' : 'ASC';
     const limit = 10;
+    this.sortWinners = sort;
     const { data, count } = await winner.getAll(
       this.pageWinners,
       limit,
-      sort,
+      this.sortWinners,
       this.orderWinners
     );
     const winnersFull = await this.getWinnersInfo(data);
     this.winners = winnersFull;
     this.countWinners = count;
-    this.orderWinners = this.orderWinners === 'ASC' ? 'DESC' : 'ASC';
   }
 
   public async initialization(): Promise<IStorageService> {
@@ -53,7 +56,12 @@ class StorageService implements IStorageService {
   }
 
   public async getWinners(): Promise<void> {
-    const { data, count } = await winner.getAll(this.pageWinners);
+    const { data, count } = await winner.getAll(
+      this.pageWinners,
+      10,
+      this.sortWinners,
+      this.orderWinners
+    );
     const winnersFull = await this.getWinnersInfo(data);
     this.winners = winnersFull;
     this.countWinners = count;
@@ -107,7 +115,7 @@ class StorageService implements IStorageService {
 
   public async getPrevCars(): Promise<void> {
     this.pageGarage -= 1;
-    await this.getWinners();
+    await this.getCars();
   }
 
   public async getPrevWinners(): Promise<void> {
@@ -143,6 +151,17 @@ class StorageService implements IStorageService {
       await winner.create({ id, wins: 1, time });
     }
     this.getWinners();
+  }
+
+  public changeVisibilityArrow(): void {
+    const arrow = document.querySelector(
+      `#${this.sortWinners}`
+    ) as HTMLSpanElement;
+    if (this.orderWinners === 'ASC') {
+      arrow.textContent = '↑';
+    } else {
+      arrow.textContent = '↓';
+    }
   }
 }
 

@@ -4,12 +4,140 @@
   padding: 0;
 }
 
-.wrapper {
-  position: relative;
+body {
+  background-color: rgb(100, 100, 100);
 }
 
 li {
   list-style-type: none;
+}
+
+.wrapper {
+  position: relative;
+}
+
+.menu-pages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+
+  .button {
+    font-size: 18px;
+  }
+}
+
+.button {
+  padding: 5px;
+  background-color: rgb(173, 196, 165);
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button[disabled] {
+  color: rgb(100, 100, 100);
+  background-color: #fff;
+  cursor: auto;
+}
+
+.button:not([disabled]):hover {
+  background-color: rgb(151, 165, 147);
+}
+
+.stop-engine-button,
+.reset-button {
+  background-color: #da5959;
+
+  &:not([disabled]):hover {
+    background-color: #a01d1d;
+  }
+}
+
+.start-engine-button,
+.race-button {
+  background-color: #6b974e;
+
+  &:not([disabled]):hover {
+    background-color: #45682e;
+  }
+}
+
+.container-forms {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.input {
+  width: 300px;
+  border: 1px solid rgb(173, 196, 165);
+  border-radius: 5px;
+}
+
+.race-controls {
+  display: flex;
+  padding-top: 5px;
+  justify-content: center;
+  gap: 10px;
+}
+
+.container-garage,
+.page-winners {
+  color: #fff;
+}
+
+.header {
+  padding-left: 5px;
+}
+
+.header-page {
+  padding: 10px 0 10px 5px;
+}
+
+.general-buttons,
+.control-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 20px;
+}
+
+.control-buttons {
+  padding-top: 5px;
+}
+
+.car-name {
+  color: #d6cf84;
+  font-size: 20px;
+}
+
+.car-win {
+  svg {
+    height: 30px;
+  }
+}
+
+.number-wins,
+.record-column {
+  cursor: pointer;
+}
+
+.colum-wins {
+  padding: 0 20px;
+}
+
+.number-wins:hover,
+.record-column:hover {
+  color: #d6cf84;
 }
 
 .road {
@@ -19,6 +147,12 @@ li {
   align-items: flex-end;
   padding-left: 30px;
   padding-right: 150px;
+  margin-bottom: 15px;
+}
+
+.table-win {
+  margin: 0 auto;
+  font-size: 20px;
 }
 
 .flag {
@@ -26,6 +160,13 @@ li {
   height: 60px;
   background-image: url(./flag.svg);
   background-size: 60px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0 20px 0;
 }
 
 .popup-winner {

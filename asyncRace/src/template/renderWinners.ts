@@ -8,13 +8,14 @@ ${storage.winners
     ({ name, color, wins, time }: IWinnerFull, i) => `
     <tr>
       <td>${i + 1}</td>
-      <td>${carColor(color)}</td>
+      <td>
+        <div class="car-win">${carColor(color)}</div>
+      </td>
       <td>${name}</td>
-      <td>${wins}</td>
+      <td class="colum-wins">${wins}</td>
       <td>${time}</td>
     </tr>
     `
   )
   .join('')}
-
 `;

@@ -2,13 +2,13 @@ import carColor from './carColor';
 
 export default (name: string, color: string, id: number) => `
   <div class="general-buttons">
-    <button class="button select-button" id="select-car-${id}">SELECT</button>
-    <button class="button remove-button" id="remove-car-${id}">REMOVE</button>
+    <button class="button select-button" id="select-car-${id}">Select</button>
+    <button class="button remove-button" id="remove-car-${id}">Remove</button>
     <span class="car-name">${name}</span>
   </div>
-  <div>
-    <button class="A start-engine-button" id="start-engine-car-${id}">A</button>
-    <button class="B stop-engine-button" id="stop-engine-car-${id}">B</button>
+  <div class="control-buttons">
+    <button class="button start-engine-button" id="start-engine-car-${id}">Start</button>
+    <button class="button stop-engine-button" id="stop-engine-car-${id}" disabled>Stop</button>
   </div>
   <div class="road">
     <div class="road-car">

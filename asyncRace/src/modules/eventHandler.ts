@@ -86,6 +86,7 @@ export default class EventHandler {
     await this.storage.getNextWinners();
     this.template.updateContainerWinner(this.storage);
     this.template.updateViewWinner();
+    this.storage.changeVisibilityArrow();
   }
 
   public async prevPageGarage() {
@@ -97,6 +98,7 @@ export default class EventHandler {
     await this.storage.getPrevWinners();
     this.template.updateContainerWinner(this.storage);
     this.template.updateViewWinner();
+    this.storage.changeVisibilityArrow();
   }
 
   public async generatorCar() {

@@ -26,4 +26,5 @@ export interface IStorageService {
   getPrevWinners(): Promise<void>;
   getNextWinners(): Promise<void>;
   sortingWinners(param: string): Promise<void>;
+  changeVisibilityArrow(): void;
 }

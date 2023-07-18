@@ -10,6 +10,7 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({
+      title: 'async race',
       favicon: './src/favicon.ico',
       filename: 'index.html',
     }),

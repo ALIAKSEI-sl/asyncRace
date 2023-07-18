@@ -2,7 +2,7 @@ import { IStorageService } from '../models/store.model';
 import renderGarage from './renderGarage';
 
 export default (storage: IStorageService) => `
-    <div>
+    <div class="container-forms">
       <form class='form' id='create'>
         <input class='input' id='create-name' name="nameCar" type=""text"></input>
         <input class="color" id="create-color" name="color" type="color" value="#000000"></input>
@@ -21,12 +21,12 @@ export default (storage: IStorageService) => `
       <button class="button generator-button" id='generator'> Generate cars</button>
     </div>
 
-    <div id="garage">
+    <div class="container-garage">
       ${renderGarage(storage)}
     </div>
 
     <div class="pagination">
-      <button class="button prev-btn-garage" id='prev-garage' disabled>Prev</button>
-      <button class="button next-btn-garage" id='next-garage' disabled>Next</button>
+      <button class="button prev-btn-garage" id='prev-garage' disabled>Previous page</button>
+      <button class="button next-btn-garage" id='next-garage' disabled>Next page</button>
     </div>
 `;
