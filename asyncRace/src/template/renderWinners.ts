@@ -1,9 +1,8 @@
-import { IStorageService } from '../models/store.model';
 import { IWinnerFull } from '../models/winner.model';
 import carColor from './carColor';
 
-export default (storage: IStorageService) => `
-${storage.winners
+export default (winners: IWinnerFull[]) => `
+${winners
   .map(
     ({ name, color, wins, time }: IWinnerFull, i) => `
     <tr>

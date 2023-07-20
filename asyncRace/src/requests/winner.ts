@@ -1,15 +1,24 @@
-import { IWinner, IWinners, Order, Sort } from '../models/winner.model';
+import {
+  IWinner,
+  IWinnerClient,
+  IWinners,
+  Order,
+  Sort,
+} from '../models/winner.model';
 
-class Winner {
-  url: string;
+class Winner implements IWinnerClient {
+  private url: string;
+
+  private limitWinner;
 
   constructor() {
     this.url = 'http://127.0.0.1:3000/winners';
+    this.limitWinner = 10;
   }
 
-  async getAll(
+  public async getAll(
     page: number,
-    limit = 10,
+    limit = this.limitWinner,
     sort: Sort = 'id',
     order: Order = 'ASC'
   ): Promise<IWinners> {
@@ -22,13 +31,13 @@ class Winner {
     };
   }
 
-  async get(id: number): Promise<IWinner | null> {
+  public async get(id: number): Promise<IWinner | null> {
     const response = await fetch(`${this.url}/${id}`);
     if (response.status === 404) return null;
     return response.json();
   }
 
-  async create(body: IWinner): Promise<IWinner> {
+  public async create(body: IWinner): Promise<IWinner> {
     const response = await fetch(this.url, {
       method: 'POST',
       headers: {
@@ -39,11 +48,11 @@ class Winner {
     return response.json();
   }
 
-  async remove(id: number): Promise<void> {
+  public async remove(id: number): Promise<void> {
     await fetch(`${this.url}/${id}`, { method: 'DELETE' });
   }
 
-  async update(id: number, body: Omit<IWinner, 'id'>): Promise<IWinner> {
+  public async update(id: number, body: Omit<IWinner, 'id'>): Promise<IWinner> {
     const response = await fetch(`${this.url}/${id}`, {
       method: 'PUT',
       headers: {

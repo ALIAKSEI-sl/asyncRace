@@ -1,9 +1,13 @@
-import { IStorageService } from '../models/store.model';
+import { IWinnerFull } from '../models/winner.model';
 import renderWinners from './renderWinners';
 
-export default (storage: IStorageService) => `
-  <h1 class="header">Winners (${storage.countWinners})</h1>
-  <h2 class="header-page">Page #(${storage.pageWinners})</h2>
+export default (
+  countWinners: number,
+  pageWinners: number,
+  winners: IWinnerFull[]
+) => `
+  <h1 class="header">Winners (${countWinners})</h1>
+  <h2 class="header-page">Page #(${pageWinners})</h2>
   <table class="table-win">
     <thead>
       <tr>
@@ -15,7 +19,7 @@ export default (storage: IStorageService) => `
       </tr>
     </thead>
     <tbody>
-    ${renderWinners(storage)}
+    ${renderWinners(winners)}
     </tbody>
   </table>
   <div class="pagination">

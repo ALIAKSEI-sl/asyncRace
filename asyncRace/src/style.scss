@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,10 +12,6 @@ body {
 
 li {
   list-style-type: none;
-}
-
-.wrapper {
-  position: relative;
 }
 
 .menu-pages {
@@ -48,7 +46,7 @@ li {
 }
 
 .stop-engine-button,
-.reset-button {
+.reset-btn {
   background-color: #da5959;
 
   &:not([disabled]):hover {
@@ -57,7 +55,7 @@ li {
 }
 
 .start-engine-button,
-.race-button {
+.race-btn {
   background-color: #6b974e;
 
   &:not([disabled]):hover {
@@ -170,8 +168,12 @@ li {
 }
 
 .popup-winner {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 32px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-family: 'Roboto', sans-serif;
 }

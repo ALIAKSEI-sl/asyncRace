@@ -1,13 +1,16 @@
-import { ICar, ICars } from '../models/garage.model';
+import { ICar, ICars, IGarageClient } from '../models/garage.model';
 
-class Garage {
-  url: string;
+class Garage implements IGarageClient {
+  private url;
+
+  private limitCar;
 
   constructor() {
     this.url = 'http://127.0.0.1:3000/garage';
+    this.limitCar = 7;
   }
 
-  async getAll(page: number, limit = 7): Promise<ICars> {
+  public async getAll(page: number, limit = this.limitCar): Promise<ICars> {
     const response = await fetch(`${this.url}?_page=${page}&_limit=${limit}`);
     return {
       data: await response.json(),
@@ -15,12 +18,12 @@ class Garage {
     };
   }
 
-  async get(id: number): Promise<ICar> {
+  public async get(id: number): Promise<ICar> {
     const response = await fetch(`${this.url}/${id}`);
     return response.json();
   }
 
-  async create(body: Omit<ICar, 'id'>): Promise<ICar> {
+  public async create(body: Omit<ICar, 'id'>): Promise<ICar> {
     const response = await fetch(this.url, {
       method: 'POST',
       headers: {
@@ -31,11 +34,11 @@ class Garage {
     return response.json();
   }
 
-  async remove(id: number): Promise<void> {
+  public async remove(id: number): Promise<void> {
     await fetch(`${this.url}/${id}`, { method: 'DELETE' });
   }
 
-  async update(id: number, body: Omit<ICar, 'id'>): Promise<ICar> {
+  public async update(id: number, body: Omit<ICar, 'id'>): Promise<ICar> {
     const response = await fetch(`${this.url}/${id}`, {
       method: 'PUT',
       headers: {

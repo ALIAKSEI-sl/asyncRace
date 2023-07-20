@@ -1,7 +1,13 @@
-import { IMovement } from '../models/engine.model';
-import { ICar } from '../models/garage.model';
+import { IEngineClient, IMovement } from '../models/engine.model';
+import { ICar, IGarageClient } from '../models/garage.model';
 import { IStorageService } from '../models/store.model';
-import { IWinner, IWinnerFull, Order, Sort } from '../models/winner.model';
+import {
+  IWinner,
+  IWinnerClient,
+  IWinnerFull,
+  Order,
+  Sort,
+} from '../models/winner.model';
 import engine from '../requests/engine';
 import garage from '../requests/garage';
 import winner from '../requests/winner';
@@ -9,57 +15,51 @@ import winner from '../requests/winner';
 class StorageService implements IStorageService {
   public garage!: ICar[];
 
-  public countCar!: number;
-
-  public pageGarage: number;
-
   public winners!: IWinnerFull[];
+
+  public countCar!: number;
 
   public countWinners!: number;
 
+  public pageGarage: number;
+
   public pageWinners: number;
 
-  private orderWinners: Order = 'DESC';
+  private sortWinners: Sort;
 
-  private sortWinners: Sort = 'id';
+  private orderWinners: Order;
 
-  constructor() {
+  public controllers: Map<number, AbortController>;
+
+  constructor(
+    private garageClient: IGarageClient,
+    private engineClient: IEngineClient,
+    private winnerClient: IWinnerClient
+  ) {
     this.pageGarage = 1;
     this.pageWinners = 1;
+    this.sortWinners = 'id';
+    this.orderWinners = null;
+    this.controllers = new Map();
   }
 
-  public async sortingWinners(sort: Sort): Promise<void> {
-    this.orderWinners = this.orderWinners === 'ASC' ? 'DESC' : 'ASC';
-    const limit = 10;
-    this.sortWinners = sort;
-    const { data, count } = await winner.getAll(
-      this.pageWinners,
-      limit,
-      this.sortWinners,
-      this.orderWinners
-    );
-    const winnersFull = await this.getWinnersInfo(data);
-    this.winners = winnersFull;
-    this.countWinners = count;
-  }
-
-  public async initialization(): Promise<IStorageService> {
+  public async initialization(): Promise<void> {
     await this.getCars();
     await this.getWinners();
-    return this;
   }
 
   private async getCars(): Promise<void> {
-    const { data, count } = await garage.getAll(this.pageGarage);
+    const { data, count } = await this.garageClient.getAll(this.pageGarage);
     this.garage = data;
     this.countCar = count;
   }
 
-  public async getWinners(): Promise<void> {
-    const { data, count } = await winner.getAll(
+  private async getWinners(): Promise<void> {
+    const limitWinners = 10;
+    const { data, count } = await this.winnerClient.getAll(
       this.pageWinners,
-      10,
-      this.sortWinners,
+      limitWinners,
+      this.sortWinners ?? 'ASC',
       this.orderWinners
     );
     const winnersFull = await this.getWinnersInfo(data);
@@ -67,44 +67,52 @@ class StorageService implements IStorageService {
     this.countWinners = count;
   }
 
-  public async getWinnersInfo(data: IWinner[]): Promise<IWinnerFull[]> {
-    const cars = data.map(async (win) => {
-      const { name, color } = await this.getCar(win.id);
-      return { ...win, name, color };
+  private async getWinnersInfo(data: IWinner[]): Promise<IWinnerFull[]> {
+    const cars = data.map(async (w) => {
+      const { name, color } = await this.getCar(w.id);
+      return { ...w, name, color };
     });
     return Promise.all(cars);
   }
 
+  public async getCar(id: number): Promise<ICar> {
+    return this.garageClient.get(id);
+  }
+
   public async createCar(body: Omit<ICar, 'id'>): Promise<void> {
-    await garage.create(body);
+    await this.garageClient.create(body);
+    await this.getCars();
+  }
+
+  public async updateCar(id: number, body: Omit<ICar, 'id'>): Promise<void> {
+    await this.garageClient.update(id, body);
     await this.getCars();
   }
 
   public async removeCar(id: number): Promise<void> {
-    await garage.remove(id);
-    await this.getCars();
+    await this.garageClient.remove(id);
     if (this.pageGarage > 1 && this.garage.length === 1) {
       this.pageGarage -= 1;
     }
     await this.getCars();
-    const carWinner = await winner.get(id);
+    await this.removeWinners(id);
+  }
+
+  private async removeWinners(id: number): Promise<void> {
+    const carWinner = await this.winnerClient.get(id);
     if (carWinner) {
-      await winner.remove(id);
+      await this.winnerClient.remove(id);
       await this.getWinners();
     }
   }
 
-  public async getCar(id: number): Promise<ICar> {
-    return garage.get(id);
-  }
-
-  public async updateCar(id: number, body: Omit<ICar, 'id'>): Promise<void> {
-    await garage.update(id, body);
+  public async getNextCars(): Promise<void> {
+    this.pageGarage += 1;
     await this.getCars();
   }
 
-  public async getNextCars(): Promise<void> {
-    this.pageGarage += 1;
+  public async getPrevCars(): Promise<void> {
+    this.pageGarage -= 1;
     await this.getCars();
   }
 
@@ -113,17 +121,19 @@ class StorageService implements IStorageService {
     await this.getWinners();
   }
 
-  public async getPrevCars(): Promise<void> {
-    this.pageGarage -= 1;
-    await this.getCars();
-  }
-
   public async getPrevWinners(): Promise<void> {
     this.pageWinners -= 1;
     await this.getWinners();
   }
 
-  public async generatorCar(cars: Omit<ICar, 'id'>[]) {
+  public changeVisibilityArrow(): void {
+    if (this.orderWinners) {
+      const arw = document.querySelector(`#${this.sortWinners}`) as HTMLElement;
+      arw.textContent = this.orderWinners === 'ASC' ? '↑' : '↓';
+    }
+  }
+
+  public async generatorCars(cars: Omit<ICar, 'id'>[]): Promise<void> {
     await Promise.all(
       cars.map(async (car) => {
         await this.createCar(car);
@@ -132,37 +142,42 @@ class StorageService implements IStorageService {
   }
 
   public async startCar(id: number): Promise<IMovement> {
-    return engine.control(id, 'started');
+    return this.engineClient.control(id, 'started');
+  }
+
+  public async updateWinner(id: number, time: number): Promise<void> {
+    const car = await this.winnerClient.get(id);
+    if (car) {
+      await this.winnerClient.update(id, {
+        wins: car.wins + 1,
+        time: time < car.time ? time : car.time,
+      });
+    } else {
+      await this.winnerClient.create({ id, wins: 1, time });
+    }
+    await this.getWinners();
+  }
+
+  public async sortingWinners(sort: Sort): Promise<void> {
+    this.orderWinners = this.orderWinners === 'ASC' ? 'DESC' : 'ASC';
+    this.sortWinners = sort;
+    await this.getWinners();
   }
 
   public async driveCar(id: number): Promise<{ success: boolean }> {
-    return engine.switch(id, 'drive');
+    const controller = new AbortController();
+    this.controllers.set(id, controller);
+    return this.engineClient.switch(id, 'drive', controller.signal);
   }
 
   public async stopCar(id: number): Promise<IMovement> {
-    return engine.control(id, 'stopped');
+    return this.engineClient.control(id, 'stopped');
   }
 
-  public async addWinner(id: number, time: number): Promise<void> {
-    const car = await winner.get(id);
-    if (car) {
-      await winner.update(id, { wins: car.wins + 1, time });
-    } else {
-      await winner.create({ id, wins: 1, time });
-    }
-    this.getWinners();
-  }
-
-  public changeVisibilityArrow(): void {
-    const arrow = document.querySelector(
-      `#${this.sortWinners}`
-    ) as HTMLSpanElement;
-    if (this.orderWinners === 'ASC') {
-      arrow.textContent = '↑';
-    } else {
-      arrow.textContent = '↓';
-    }
+  public signalAbort(id: number): void {
+    this.controllers.get(id)?.abort();
+    this.controllers.delete(id);
   }
 }
 
-export default new StorageService();
+export default new StorageService(garage, engine, winner);

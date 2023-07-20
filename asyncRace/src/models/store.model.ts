@@ -1,6 +1,6 @@
 import { IMovement } from './engine.model';
 import { ICar } from './garage.model';
-import { IWinner, IWinnerFull } from './winner.model';
+import { IWinnerFull } from './winner.model';
 
 export interface IStorageService {
   garage: ICar[];
@@ -9,22 +9,21 @@ export interface IStorageService {
   winners: IWinnerFull[];
   countWinners: number;
   pageWinners: number;
-  initialization(): Promise<IStorageService>;
+  initialization(): Promise<void>;
   createCar(body: Omit<ICar, 'id'>): Promise<void>;
   removeCar(id: number): Promise<void>;
   getCar(id: number): Promise<ICar>;
   updateCar(id: number, body: Omit<ICar, 'id'>): Promise<void>;
   getNextCars(): Promise<void>;
   getPrevCars(): Promise<void>;
-  generatorCar(cars: Omit<ICar, 'id'>[]): Promise<void>;
+  generatorCars(cars: Omit<ICar, 'id'>[]): Promise<void>;
   startCar(id: number): Promise<IMovement>;
   driveCar(id: number): Promise<{ success: boolean }>;
   stopCar(id: number): Promise<IMovement>;
-  getWinnersInfo(data: IWinner[]): Promise<IWinnerFull[]>;
-  getWinners(): Promise<void>;
-  addWinner(id: number, time: number): Promise<void>;
+  updateWinner(id: number, time: number): Promise<void>;
   getPrevWinners(): Promise<void>;
   getNextWinners(): Promise<void>;
   sortingWinners(param: string): Promise<void>;
   changeVisibilityArrow(): void;
+  signalAbort(id: number): void;
 }
