@@ -1,5 +1,4 @@
 import { IWinnerFull } from '../models/winner.model';
-import carColor from './carColor';
 
 export default (winners: IWinnerFull[]) => `
 ${winners
@@ -8,7 +7,11 @@ ${winners
     <tr>
       <td>${i + 1}</td>
       <td>
-        <div class="car-win">${carColor(color)}</div>
+        <div class="car-win">
+        <svg class="car" style="fill: ${color}" width="70">
+          <use href="#car" width="50" height="30"></use>
+        </svg>
+        </div>
       </td>
       <td>${name}</td>
       <td class="colum-wins">${wins}</td>

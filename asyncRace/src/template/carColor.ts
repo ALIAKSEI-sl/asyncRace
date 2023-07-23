@@ -1,12 +1,12 @@
-export default (color: string) => `
+export default `
   <?xml version="1.0" standalone="no"?>
   <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
   "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-  <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-  width="110.000000pt" height="50.000000pt" viewBox="0 0 1280.000000 640.000000"
-  preserveAspectRatio="xMidYMid meet">
-  <g transform="translate(0.000000,750.000000) scale(0.100000,-0.100000)"
-  fill="${color}" stroke="none">
+  <svg version="1.0" xmlns="http://www.w3.org/2000/svg" display="none">
+  <symbol id="car" width="110.000000pt" height="50.000000pt" viewBox="0 0 1280.000000 640.000000"
+  preserveAspectRatio="xMidYMid meet"
+  </symbol>
+  <g transform="translate(0.000000,750.000000) scale(0.100000,-0.100000)">
   <path d="M3605 5335 c-5 -1 -38 -10 -71 -20 l-62 -17 -7 -79 c-5 -66 -10 -82
   -28 -94 -30 -19 -173 -75 -547 -215 -482 -180 -1078 -425 -1215 -500 -148 -81
   -230 -105 -410 -120 -71 -6 -173 -19 -225 -30 -143 -28 -342 -49 -558 -56

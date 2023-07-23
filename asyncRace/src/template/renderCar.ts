@@ -1,5 +1,3 @@
-import carColor from './carColor';
-
 export default (name: string, color: string, id: number) => `
   <div class="general-buttons">
     <button class="button select-button" id="select-car-${id}">Select</button>
@@ -12,9 +10,9 @@ export default (name: string, color: string, id: number) => `
   </div>
   <div class="road">
     <div class="road-car">
-      <div class="car" id="car-${id}">
-        ${carColor(color)}
-      </div>
+      <svg class="car" id="car-${id}" style="fill: ${color}">
+      <use href="#car"></use>
+      </svg>
     </div>
     <div class=" flag flag-${id}"></div>
   </div>

@@ -12,6 +12,15 @@ class TemplateBuilder implements ITemplateBuilder {
 
   private winnersChild!: HTMLDivElement;
 
+  private limitCar;
+
+  private limitWinners;
+
+  constructor() {
+    this.limitCar = 7;
+    this.limitWinners = 10;
+  }
+
   public initialization(storage: IStorageService): void {
     document.body.innerHTML = mainTemplate;
     this.container = document.querySelector('.container') as HTMLDivElement;
@@ -50,7 +59,7 @@ class TemplateBuilder implements ITemplateBuilder {
 
   private paginationVisibility(pageName: string, page: number, count: number) {
     const parent = pageName === 'garage' ? this.garageChild : this.winnersChild;
-    const limit = pageName === 'garage' ? 7 : 10;
+    const limit = pageName === 'garage' ? this.limitCar : this.limitWinners;
     const prevBtn = parent.querySelector(`.prev-btn-${pageName}`) as BtnType;
     const nextBtn = parent.querySelector(`.next-btn-${pageName}`) as BtnType;
     if (page > 1) prevBtn.disabled = false;

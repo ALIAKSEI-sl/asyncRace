@@ -1,3 +1,5 @@
+import carColor from './carColor';
+
 export default `
   <div class='wrapper'>
     <div class='menu-pages'>
@@ -6,4 +8,5 @@ export default `
     </div>
     <div class='container'></div>
   </div>
+  ${carColor}
 `;
