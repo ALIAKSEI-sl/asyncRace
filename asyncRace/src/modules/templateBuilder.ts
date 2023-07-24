@@ -109,7 +109,7 @@ class TemplateBuilder implements ITemplateBuilder {
   }
 
   public toggleBtnDisable(selector: string): void {
-    const btn = document.querySelector(`#${selector}`) as HTMLButtonElement;
+    const btn = document.querySelector(`${selector}`) as HTMLButtonElement;
     btn.disabled = !btn.disabled;
   }
 

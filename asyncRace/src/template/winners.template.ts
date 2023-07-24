@@ -19,7 +19,7 @@ export default (
       </tr>
     </thead>
     <tbody>
-    ${renderWinners(winners)}
+    ${renderWinners(winners, pageWinners)}
     </tbody>
   </table>
   <div class="pagination">

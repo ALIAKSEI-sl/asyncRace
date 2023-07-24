@@ -24,6 +24,7 @@ export default class EventHandler {
 
   public async submitForms(event: SubmitEvent) {
     event.preventDefault();
+    this.template.toggleBtnDisable('.button-create');
     const form = event.target as HTMLFormElement;
     const data = new FormData(form);
     const name = data.get('nameCar') as string;
@@ -55,6 +56,7 @@ export default class EventHandler {
   }
 
   public async selectCar(button: HTMLButtonElement) {
+    this.template.toggleBtnDisable('.button-create');
     const id = +button.id.replace('select-car-', '');
     const { name, color } = this.storage.garage.find(
       (car) => car.id === id
@@ -132,14 +134,14 @@ export default class EventHandler {
 
   public async startRace() {
     this.storage.garage.forEach(async (car) => {
-      this.template.toggleBtnDisable(`start-engine-car-${car.id}`);
+      this.template.toggleBtnDisable(`#start-engine-car-${car.id}`);
       await this.moveCar(car.id, true);
     });
   }
 
   private async moveCar(id: number, isRace: boolean) {
     const { distance, velocity } = await this.storage.startCar(id);
-    this.template.toggleBtnDisable(`stop-engine-car-${id}`);
+    this.template.toggleBtnDisable(`#stop-engine-car-${id}`);
     this.template.switchControlsBtn(true);
     const time = +(distance / velocity / 1000).toFixed(1);
     const car = document.querySelector(`#car-${id}`) as HTMLDivElement;
