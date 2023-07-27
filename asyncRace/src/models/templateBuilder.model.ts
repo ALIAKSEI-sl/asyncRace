@@ -3,6 +3,8 @@ import { IStorageService } from './store.model';
 export type BtnType = HTMLButtonElement;
 
 export interface ITemplateBuilder {
+  garageChild: HTMLDivElement;
+  winnersChild: HTMLDivElement;
   initialization(store: IStorageService): void;
   createWinnersChild(storage: IStorageService): void;
   showViewWinners(): void;

@@ -8,9 +8,9 @@ import winnersTemplate from '../template/winners.template';
 class TemplateBuilder implements ITemplateBuilder {
   private container!: HTMLDivElement;
 
-  private garageChild!: HTMLDivElement;
+  public garageChild!: HTMLDivElement;
 
-  private winnersChild!: HTMLDivElement;
+  public winnersChild!: HTMLDivElement;
 
   private limitCar;
 
@@ -27,6 +27,8 @@ class TemplateBuilder implements ITemplateBuilder {
     this.createGarageChild(storage);
     this.container.append(this.garageChild);
     this.createWinnersChild(storage);
+    this.winnersChild.classList.add('hide');
+    this.container.append(this.winnersChild);
   }
 
   private createGarageChild(storage: IStorageService) {
@@ -67,15 +69,19 @@ class TemplateBuilder implements ITemplateBuilder {
   }
 
   public showViewWinners(): void {
-    if (this.container.firstElementChild?.classList.contains('page-garage')) {
-      this.container.replaceChild(this.winnersChild, this.garageChild);
-    }
+    // if (this.container.firstElementChild?.classList.contains('page-garage')) {
+    // this.container.replaceChild(this.winnersChild, this.garageChild);
+    this.garageChild.classList.add('hide');
+    this.winnersChild.classList.remove('hide');
+    // }
   }
 
   public showViewGarage(): void {
-    if (this.container.firstElementChild?.classList.contains('page-winners')) {
-      this.container.replaceChild(this.garageChild, this.winnersChild);
-    }
+    // if (this.container.firstElementChild?.classList.contains('page-winners')) {
+    // this.container.replaceChild(this.garageChild, this.winnersChild);
+    this.garageChild.classList.remove('hide');
+    this.winnersChild.classList.add('hide');
+    // }
   }
 
   public showWinner(name: string, time: number): void {
@@ -109,7 +115,9 @@ class TemplateBuilder implements ITemplateBuilder {
   }
 
   public toggleBtnDisable(selector: string): void {
-    const btn = document.querySelector(`${selector}`) as HTMLButtonElement;
+    const btn = this.garageChild.querySelector(
+      `${selector}`
+    ) as HTMLButtonElement;
     btn.disabled = !btn.disabled;
   }
 
@@ -121,7 +129,7 @@ class TemplateBuilder implements ITemplateBuilder {
   }
 
   private animationCarReset(id: number): void {
-    const car = document.querySelector(`#car-${id}`) as HTMLDivElement;
+    const car = this.garageChild.querySelector(`#car-${id}`) as HTMLDivElement;
     car.style.transition = 'none';
     car.style.transform = 'none';
   }
@@ -134,14 +142,14 @@ class TemplateBuilder implements ITemplateBuilder {
   }
 
   public switchControlsBtn(isStart: boolean): void {
-    const btnRace = document.querySelector('.race-btn') as BtnType;
-    const btnRes = document.querySelector('.reset-btn') as BtnType;
+    const btnRace = this.garageChild.querySelector('.race-btn') as BtnType;
+    const btnRes = this.garageChild.querySelector('.reset-btn') as BtnType;
     if (isStart) {
       btnRace.disabled = true;
       btnRes.disabled = false;
     } else {
       const btnsStr = Array.from(
-        document.querySelectorAll('.start-engine-button')
+        this.garageChild.querySelectorAll('.start-engine-button')
       ) as BtnType[];
       if (btnsStr.every((e) => !e.disabled)) {
         btnRace.disabled = false;
@@ -152,8 +160,12 @@ class TemplateBuilder implements ITemplateBuilder {
   }
 
   public resetCarBtn(id: number): void {
-    const btnStr = document.querySelector(`#start-engine-car-${id}`) as BtnType;
-    const btnStop = document.querySelector(`#stop-engine-car-${id}`) as BtnType;
+    const btnStr = this.garageChild.querySelector(
+      `#start-engine-car-${id}`
+    ) as BtnType;
+    const btnStop = this.garageChild.querySelector(
+      `#stop-engine-car-${id}`
+    ) as BtnType;
     btnStr.disabled = false;
     btnStop.disabled = true;
   }

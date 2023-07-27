@@ -13,12 +13,11 @@ class App {
 
   public async start(
     Handler: typeof EventHandler,
-    Listener: typeof EventListener,
-    modelCar: string[]
+    Listener: typeof EventListener
   ) {
     await this.storage.initialization();
     this.template.initialization(this.storage);
-    const handler = new Handler(this.template, this.storage, modelCar);
+    const handler = new Handler(this.template, this.storage);
     const listener = new Listener(handler);
     listener.listen();
   }

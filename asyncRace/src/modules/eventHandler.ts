@@ -1,6 +1,7 @@
 import { ICar } from '../models/garage.model';
 import { IStorageService } from '../models/store.model';
 import { ITemplateBuilder } from '../models/templateBuilder.model';
+import modelCar from '../template/modelCar';
 
 export default class EventHandler {
   updateCarId;
@@ -9,8 +10,7 @@ export default class EventHandler {
 
   constructor(
     private template: ITemplateBuilder,
-    private storage: IStorageService,
-    private modelCar: string[]
+    private storage: IStorageService
   ) {
     this.isWinner = true;
     this.updateCarId = 0;
@@ -124,7 +124,11 @@ export default class EventHandler {
   }
 
   private getRandomModel() {
-    return this.modelCar[Math.floor(Math.random() * this.modelCar.length)];
+    const model =
+      modelCar[Math.floor(Math.random() * modelCar.length)].split(' ')[0];
+    const mark =
+      modelCar[Math.floor(Math.random() * modelCar.length)].split(' ')[1];
+    return `${model} ${mark}`;
   }
 
   public async startCar(button: HTMLButtonElement) {
@@ -144,7 +148,9 @@ export default class EventHandler {
     this.template.toggleBtnDisable(`#stop-engine-car-${id}`);
     this.template.switchControlsBtn(true);
     const time = +(distance / velocity / 1000).toFixed(1);
-    const car = document.querySelector(`#car-${id}`) as HTMLDivElement;
+    const car = this.template.garageChild.querySelector(
+      `#car-${id}`
+    ) as HTMLDivElement;
     this.template.animationCarStart(car, time);
     if (isRace) this.subscribeWinner(car, id, time);
     const { success } = await this.storage.driveCar(id);
@@ -181,9 +187,9 @@ export default class EventHandler {
   }
 
   private async resetCar(id: number) {
-    this.template.resetCar(id);
     this.storage.signalAbort(id);
     await this.storage.stopCar(id);
+    this.template.resetCar(id);
   }
 
   public async sortingWinners(by: 'wins' | 'time') {
