@@ -12,6 +12,10 @@ class TemplateBuilder implements ITemplateBuilder {
 
   public winnersChild!: HTMLDivElement;
 
+  private containerWinners!: HTMLElement;
+
+  private containerGarage!: HTMLElement;
+
   private limitCar;
 
   private limitWinners;
@@ -23,17 +27,31 @@ class TemplateBuilder implements ITemplateBuilder {
 
   public initialization(storage: IStorageService): void {
     document.body.innerHTML = mainTemplate;
-    this.container = document.querySelector('.container') as HTMLDivElement;
+    const container = document.body.querySelector(
+      '.container'
+    ) as HTMLDivElement;
+    const containerGarage = this.createElement('div', 'container-garage');
+    const containerWinners = this.createElement('div', 'container-winners');
+    containerWinners.classList.add('hide');
+    container.append(containerGarage, containerWinners);
+    this.containerGarage = containerGarage;
+    this.containerWinners = containerWinners;
     this.createGarageChild(storage);
-    this.container.append(this.garageChild);
     this.createWinnersChild(storage);
-    this.winnersChild.classList.add('hide');
-    this.container.append(this.winnersChild);
+    containerGarage.append(this.garageChild);
+    containerWinners.append(this.winnersChild);
+  }
+
+  private createElement(name: string, className: string) {
+    const elem = document.createElement(name);
+    elem.classList.add(className);
+    return elem;
   }
 
   private createGarageChild(storage: IStorageService) {
     const root = document.createElement('div');
     root.classList.add('page-garage');
+
     root.innerHTML = garageTemplate(
       storage.countCar,
       storage.pageGarage,
@@ -69,20 +87,17 @@ class TemplateBuilder implements ITemplateBuilder {
   }
 
   public showViewWinners(): void {
-    // const btm = document.querySelector(.)
-    // if (this.container.firstElementChild?.classList.contains('page-garage')) {
-    // this.container.replaceChild(this.winnersChild, this.garageChild);
-    this.garageChild.classList.add('hide');
-    this.winnersChild.classList.remove('hide');
-    // }
+    if (this.containerWinners.classList.contains('hide')) {
+      this.containerGarage.classList.add('hide');
+      this.containerWinners.classList.remove('hide');
+    }
   }
 
   public showViewGarage(): void {
-    // if (this.container.firstElementChild?.classList.contains('page-winners')) {
-    // this.container.replaceChild(this.garageChild, this.winnersChild);
-    this.garageChild.classList.remove('hide');
-    this.winnersChild.classList.add('hide');
-    // }
+    if (this.containerGarage.classList.contains('hide')) {
+      this.containerGarage.classList.remove('hide');
+      this.containerWinners.classList.add('hide');
+    }
   }
 
   public showWinner(name: string, time: number): void {
@@ -96,13 +111,13 @@ class TemplateBuilder implements ITemplateBuilder {
   }
 
   public updateViewGarage() {
-    this.container.innerHTML = '';
-    this.container.append(this.garageChild);
+    this.containerGarage.innerHTML = '';
+    this.containerGarage.append(this.garageChild);
   }
 
   public updateViewWinner(): void {
-    this.container.innerHTML = '';
-    this.container.append(this.winnersChild);
+    this.containerWinners.innerHTML = '';
+    this.containerWinners.append(this.winnersChild);
   }
 
   public changeViewGarage(storage: IStorageService) {

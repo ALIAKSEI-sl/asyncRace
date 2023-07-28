@@ -170,7 +170,7 @@ export default class EventHandler {
     const { name } = this.storage.garage.find((c) => c.id === id) as ICar;
     this.template.showWinner(name, time);
     await this.storage.updateWinner(id, time);
-    this.template.createWinnersChild(this.storage);
+    this.template.changeViewWinner(this.storage);
   }
 
   public async stopCar(button: HTMLButtonElement) {
